@@ -12,60 +12,91 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Nhập số lượng hình: ");
-        int sizeShape = sc.nextInt();
-
         List<Shape> shapeList = new ArrayList<>();
         Random random = new Random();
 
-        // 1. Khởi tạo ngẫu nhiên 5 loại hình
+        System.out.print("Nhập số lượng hình muốn tạo trong ứng dụng Paint: ");
+        int sizeShape = sc.nextInt();
+
         for (int i = 0; i < sizeShape; i++) {
+            // Chọn ngẫu nhiên loại hình: 0: Point, 1: Line, 2: Circle, 3: Rectangle, 4: Triangle
             int type = random.nextInt(5);
-            double x = random.nextDouble() * 100;
-            double y = random.nextDouble() * 100;
+
+            System.out.println("\n========================================");
+            System.out.println("KHỞI TẠO HÌNH THỨ " + (i + 1));
+
+            // Mọi hình đều bắt đầu từ một điểm gốc (P1)
+            System.out.println("1. Nhập tọa độ ĐIỂM GỐC (P1) của hình:");
+            System.out.print("   - Tọa độ x1: ");
+            double x = sc.nextDouble();
+            System.out.print("   - Tọa độ y1: ");
+            double y = sc.nextDouble();
             Point p1 = new Point(x, y);
 
             switch (type) {
-                case 0: shapeList.add(p1); break;
-                case 1:
-                    shapeList.add(new Line(p1, new Point(random.nextDouble()*100, random.nextDouble()*100)));
+                case 0: // Point
+                    System.out.println("Loại hình : ĐIỂM (Point)");
+                    shapeList.add(p1);
                     break;
-                case 2:
-                    shapeList.add(new Circle(p1, 10 + random.nextDouble()*40));
+
+                case 1: // Line
+                    System.out.println("Loại hình : ĐOẠN THẲNG (Line)");
+                    System.out.println("2. Nhập tọa độ ĐIỂM KẾT THÚC (P2):");
+                    System.out.print("   - Tọa độ x2: "); double x2 = sc.nextDouble();
+                    System.out.print("   - Tọa độ y2: "); double y2 = sc.nextDouble();
+                    shapeList.add(new Line(p1, new Point(x2, y2)));
                     break;
-                case 3:
-                    shapeList.add(new Rectangle(p1, 10 + random.nextDouble()*50, 10 + random.nextDouble()*50));
+
+                case 2: // Circle
+                    System.out.println(" Loại hình : HÌNH TRÒN (Circle)");
+                    System.out.print("2. Nhập giá trị BÁN KÍNH (Radius): ");
+                    double radius = sc.nextDouble();
+                    shapeList.add(new Circle(p1, radius));
                     break;
-                case 4:
-                    shapeList.add(new Triangle(p1, new Point(random.nextDouble()*100, random.nextDouble()*100),
-                            new Point(random.nextDouble()*100, random.nextDouble()*100)));
+
+                case 3: // Rectangle
+                    System.out.println("Loại hình : HÌNH CHỮ NHẬT (Rectangle)");
+                    System.out.print("2. Nhập CHIỀU RỘNG (Width): ");
+                    double w = sc.nextDouble();
+                    System.out.print("3. Nhập CHIỀU CAO (Height): ");
+                    double h = sc.nextDouble();
+                    shapeList.add(new Rectangle(p1, w, h));
+                    break;
+
+                case 4: // Triangle
+                    System.out.println(" Loại hình: HÌNH T AM GIÁC (Triangle)");
+                    System.out.println("2. Nhập tọa độ ĐIỂM THỨ HAI (P2):");
+                    System.out.print("   - Tọa độ x2: "); double tx2 = sc.nextDouble();
+                    System.out.print("   - Tọa độ y2: "); double ty2 = sc.nextDouble();
+                    System.out.println("3. Nhập tọa độ ĐIỂM THỨ BA (P3):");
+                    System.out.print("   - Tọa độ x3: "); double tx3 = sc.nextDouble();
+                    System.out.print("   - Tọa độ y3: "); double ty3 = sc.nextDouble();
+                    shapeList.add(new Triangle(p1, new Point(tx2, ty2), new Point(tx3, ty3)));
                     break;
             }
         }
 
-        // 2. Hiển thị danh sách kèm diện tích, chu vi và khoảng cách
-        System.out.println("\n----- CHI TIẾT TÍNH TOÁN CÁC HÌNH -----");
-        Point origin = new Point(0, 0); // Điểm gốc để tính khoảng cách tham chiếu
+        System.out.println("\n****************************************");
+        System.out.println("----- KẾT QUẢ TÍNH TOÁN CHI TIẾT -----");
+        Point origin = new Point(0, 0);
 
         for (int i = 0; i < shapeList.size(); i++) {
             Shape s = shapeList.get(i);
-            System.out.println("Hình thứ " + (i + 1) + ": " + s.toString());
+            System.out.println("\nHÌNH " + (i + 1) + ": " + s.toString());
+            System.out.printf("Diện tích: %.2f | Chu vi: %.2f\n", s.getArea(), s.getPerimeter());
 
-            // Gọi các phương thức tính toán từ interface Shape
-            System.out.printf("  + Diện tích: %.2f\n", s.getArea());
-            System.out.printf("  + Chu vi: %.2f\n", s.getPerimeter());
-
-            // Tính khoảng cách từ tâm hình đó đến điểm gốc (0,0)
-            System.out.printf("  + Khoảng cách đến gốc tọa độ (0,0): %.2f\n", s.distance(origin));
-            System.out.println("---------------------------------------");
+            System.out.printf("Khoảng cách từ tâm đến O(0,0): %.2f\n", s.distance(origin));
+            System.out.println("----------------------------------------");
         }
 
-        // 3. Thống kê tổng hợp
         double totalArea = 0;
-        for (Shape s : shapeList) totalArea += s.getArea();
-        System.out.printf("\n=> TỔNG DIỆN TÍCH TẤT CẢ CÁC HÌNH: %.2f\n", totalArea);
+        for (Shape s : shapeList) {
+            totalArea += s.getArea();
+        }
+        System.out.printf("\nTỔNG DIỆN TÍCH CỦA %d HÌNH: %.2f\n", shapeList.size(), totalArea);
 
         sc.close();
     }
+
 
 }
